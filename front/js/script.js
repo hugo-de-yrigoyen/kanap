@@ -7,27 +7,31 @@ fetch("http://localhost:3000/api/products/")
   })
   .then(function (value) {
     console.log(value);
-    let section = document.getElementById("items");
-    //Creates product items one by one
-    let as = section.queryselector("a");
+    const section = document.querySelector("#items");
+
+    //Creating HTML and getting values from API
     for (let i = 0; i < value.length; i++) {
-      section.insertAdjacentHTML(
-        "beforeend",
-        '<a href=""><article><img src="" alt="" /><h3 class="productName"></h3><p class="productDescription"></p></article></a>'
-      );
-      //section
-      //.getElementsByTagName("a")
-      as[i].setAttribute("href", "./product.html?id=" + value[i]._id);
-      section
-        .getElementsByTagName("img")
-        [i].setAttribute("src", value[i].imageUrl);
-      section
-        .getElementsByTagName("img")
-        [i].setAttribute("alt", value[i].altTxt);
-      section.getElementsByClassName("productName")[i].innerText =
-        value[i].name;
-      section.getElementsByClassName("productDescription")[i].innerText =
-        value[i].description;
+      let newArticle = document.createElement("article");
+
+      let newImage = document.createElement("img");
+      newImage.setAttribute("src", value[i].imageUrl);
+      newImage.setAttribute("alt", value[i].altTxt);
+      newArticle.appendChild(newImage);
+
+      let newH = document.createElement("h3");
+      newH.setAttribute("class", "productName");
+      newH.innerText = value[i].name;
+      newArticle.appendChild(newH);
+
+      let newP = document.createElement("p");
+      newP.setAttribute("class", "productDescription");
+      newP.innerText = value[i].description;
+      newArticle.appendChild(newP);
+
+      let newA = document.createElement("a");
+      newA.setAttribute("href", "./product.html?id=" + value[i]._id);
+      newA.appendChild(newArticle);
+      section.appendChild(newA);
     }
   })
   .catch(function (err) {

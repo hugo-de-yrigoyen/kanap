@@ -2,8 +2,6 @@
 const url = new URL(window.location.href);
 const id = new URLSearchParams(url.search).get("id");
 
-let title = document.getElementById("title").innerText;
-
 //Importing product details from API
 fetch("http://localhost:3000/api/products/" + id)
   .then(function (res) {
@@ -13,24 +11,25 @@ fetch("http://localhost:3000/api/products/" + id)
   })
   .then(function (value) {
     console.log(value);
-    let img = document.getElementsByClassName("item__img")[0];
     let newImg = document.createElement("img");
+    newImg.setAttribute("src", value.imageUrl);
+    newImg.setAttribute("alt", value.altTxt);
+    const img = document.querySelector(".item__img");
     img.appendChild(newImg);
-    img.getElementsByTagName("img")[0].setAttribute("src", value.imageUrl);
-    title = value.name;
-    document.getElementById("title").innerText = value.name;
-    document.getElementById("price").innerText = value.price;
-    document.getElementById("description").innerText = value.description;
+    const title = document.querySelector("#title");
+    title.innerText = value.name;
+    const price = document.querySelector("#price");
+    price.innerText = value.price;
+    const description = document.querySelector("#description");
+    description.innerText = value.description;
 
-    let colors = document.getElementById("colors");
+    let colors = document.querySelector("#colors");
     // Importing colors from API color array
     for (let i = 0; i < value.colors.length; i++) {
-      let newOption = document.createElement("option");
-      colors.appendChild(newOption);
-      colors
-        .getElementsByTagName("option")
-        [i + 1].setAttribute("value", value.colors[i]);
-      colors.getElementsByTagName("option")[i + 1].innerText = value.colors[i];
+      let newColor = document.createElement("option");
+      newColor.setAttribute("value", value.colors[i]);
+      newColor.innerText = value.colors[i];
+      colors.appendChild(newColor);
     }
   })
   .catch(function (err) {
@@ -39,36 +38,48 @@ fetch("http://localhost:3000/api/products/" + id)
 
 //Stocking color and number inputs
 let color = "";
-document.getElementById("colors").addEventListener("input", function (e) {
+colors.addEventListener("input", function (e) {
   color = e.target.value;
 });
 
 let number = 0;
-document.getElementById("quantity").addEventListener("input", function (e) {
+document.querySelector("#quantity").addEventListener("input", function (e) {
   number = e.target.value;
 });
 
-//Stocking number of items, their color and item name in local storage in order to retrieve them on cart page
-document.getElementById("addToCart").addEventListener("click", function () {
-  if (number > 0 && Number.isInteger(+number) && !color == "") {
-    if (localStorage.getItem(title + color) > 0) {
-      localStorage.setItem(
-        title + color,
-        Number(localStorage.getItem(title + color)) + Number(number)
-        //Number(localStorage.getItem("kanapcart")[id + "_" + color]) + Number(number)
-      );
+//Stocking in local storage : number of items, their color and id
+document.querySelector("#addToCart").addEventListener("click", function () {
+  if (check(number, color)) {
+    const item = constructItem(id, color);
+    let kanapcart = getCart();
+
+    if (kanapcart[item] > 0) {
+      kanapcart[item] = Number(kanapcart[item]) + Number(number);
     } else {
-      //localStorage.setItem("kanapcart", {id + "_" + color : number});
+      kanapcart[item] = number;
     }
-    console.log(
-      "Number of " +
-        color +
-        " " +
-        title +
-        " : " +
-        localStorage.getItem(title + color)
-    );
-  } else {
-    console.log("Invalid input !");
+
+    saveCart(kanapcart);
   }
 });
+
+function check(number, color) {
+  return number > 0 && Number.isInteger(+number) && !color == "";
+}
+
+function constructItem(id, color) {
+  return [id, color];
+}
+
+function getCart() {
+  const cart = localStorage.getItem("kanapcart");
+  if (cart != null) {
+    return JSON.parse(cart);
+  } else {
+    return {};
+  }
+}
+
+function saveCart(cart) {
+  localStorage.setItem("kanapcart", JSON.stringify(cart));
+}
