@@ -1,5 +1,6 @@
 let kanapcart = getCart();
 
+//Creates HTML element and set its attributes and content
 function createCustomElement(type, attributes = null, content = null) {
   let el = document.createElement(type);
   if (attributes != null) {
@@ -13,6 +14,7 @@ function createCustomElement(type, attributes = null, content = null) {
   return el;
 }
 
+//Creates cart in HTML based on API
 function createCartLines(id, color, number, value) {
   const items = document.querySelector("#cart__items");
   let newArticle = createCustomElement("article", [
@@ -74,6 +76,7 @@ function createCartLines(id, color, number, value) {
   items.appendChild(newArticle);
 }
 
+//Identifies cart items based on local storage cart to create HTML with next function
 function createCart(key, value) {
   let id = key.split(",")[0];
   let color = key.split(",")[1];
@@ -89,6 +92,27 @@ function createCart(key, value) {
   }
 
   createCartLines(id, color, number, value[apiNumber]);
+}
+
+//Sets total prices and quantities
+function calculatePrices() {
+  for (let i = 0; i < inputs.length; i++) {
+    priceNumber =
+      Number(
+        inputs[i]
+          .closest(".cart__item__content")
+          .firstChild.lastChild.innerText.split(" ")[0]
+      ) + Number(priceNumber);
+  }
+
+  totalPrice.innerText = priceNumber;
+
+  let quantityNumber = 0;
+  for (let i = 0; i < inputs.length; i++) {
+    quantityNumber = Number(inputs[i].value) + Number(quantityNumber);
+  }
+
+  totalQuantity.innerText = quantityNumber;
 }
 
 //Importing all products from API
@@ -109,23 +133,7 @@ fetch("http://localhost:3000/api/products/")
     let inputs = document.querySelectorAll(".itemQuantity");
 
     let priceNumber = 0;
-    for (let i = 0; i < inputs.length; i++) {
-      priceNumber =
-        Number(
-          inputs[i]
-            .closest(".cart__item__content")
-            .firstChild.lastChild.innerText.split(" ")[0]
-        ) + Number(priceNumber);
-    }
-
-    totalPrice.innerText = priceNumber;
-
-    let quantityNumber = 0;
-    for (let i = 0; i < inputs.length; i++) {
-      quantityNumber = Number(inputs[i].value) + Number(quantityNumber);
-    }
-
-    totalQuantity.innerText = quantityNumber;
+    calculatePrices();
 
     for (let i = 0; i < inputs.length; i++) {
       inputs[i].addEventListener("change", function (e) {
