@@ -239,53 +239,76 @@ let cart = {
   products: [],
 };
 
-const testMail =
-  /^(([^<()[\]\\.,;:\s@\]+(\.[^<()[\]\\.,;:\s@\]+)*)|(.+))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/;
+function validateEmail(email) {
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+}
+const testWord = /^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/;
 
-const testWord = true;
+const firstNameError = document.querySelector("#firstNameErrorMsg");
+const lastNameError = document.querySelector("#lastNameErrorMsg");
+const cityError = document.querySelector("#cityErrorMsg");
+const emailError = document.querySelector("#emailErrorMsg");
 
 order.addEventListener("click", function (event) {
   event.preventDefault();
-  //if (testWord.test(firstName.value)) {
-  cart.contact.firstName = firstName.value;
-  cart.contact.lastName = lastName.value;
-  //}
-  if (testMail.test(email.value)) {
+  let test = 0;
+  if (testWord.test(firstName.value)) {
+    cart.contact.firstName = firstName.value;
+    test += 1;
+  } else {
+    firstNameError.innerText = "Please enter a valid name";
+  }
+  if (testWord.test(lastName.value)) {
+    cart.contact.lastName = lastName.value;
+    test += 1;
+  } else {
+    lastNameError.innerText = "Please enter a valid name";
+  }
+  if (testWord.test(city.value)) {
+    cart.contact.city = city.value;
+    test += 1;
+  } else {
+    cityError.innerText = "Please enter a valid city";
+  }
+  if (validateEmail(email.value)) {
     cart.contact.email = email.value;
-    //else {
-    //message d'erreur
-    //}
+    test += 1;
+  } else {
+    emailError.innerText = "Please enter a valid email";
   }
   cart.contact.address = address.value;
-  cart.contact.city = city.value;
-  cart.contact.email = email.value;
-  let p = [];
-  Object.keys(kanapcart).forEach(function (key) {
-    p.push(key.split(",")[0]);
-  });
 
-  cart.products = p;
-  console.log(cart);
-
-  let response = fetch("http://localhost:3000/api/products/order", {
-    method: "POST",
-    body: JSON.stringify(cart),
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  })
-    .then((res) => {
-      console.log(res);
-      const url = new URL(window.location.href);
-      //res.orderID;
-      // redirection vers URL, confirmation de commande
-      // intégration de orderId dans l'URL
-      // affichage de orderId dans la prochaine page via l'URL
-    })
-    .catch(function (err) {
-      console.log(err);
+  if (test == 4) {
+    let kanaps = [];
+    Object.keys(kanapcart).forEach(function (key) {
+      kanaps.push(key.split(",")[0]);
     });
+    cart.products = kanaps;
+
+    fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      body: JSON.stringify(cart),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then(function (res) {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then(function (value) {
+        const url = window.location.href;
+        window.location.href =
+          url.split("cart")[0] + "confirmation.html?id=" + value.orderId;
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  }
 });
 
 function constructItem(id, color) {
