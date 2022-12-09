@@ -117,6 +117,11 @@ function calculatePrices(inputs) {
   totalQuantity.innerText = quantityNumber;
 }
 
+//Tests if quantity input is valid
+function validNumber(number) {
+  return number < 1 || !Number.isInteger(+number);
+}
+
 //Importing all products from API
 fetch("http://localhost:3000/api/products/")
   .then(function (res) {
@@ -127,16 +132,14 @@ fetch("http://localhost:3000/api/products/")
   .then(function (value) {
     Object.keys(kanapcart).forEach(function (key) {
       createCart(key, value);
-      //calculatePrices();
     });
 
     let inputs = document.querySelectorAll(".itemQuantity");
-
-    calculatePrices();
+    calculatePrices(inputs);
 
     for (let i = 0; i < inputs.length; i++) {
       inputs[i].addEventListener("change", function (e) {
-        if (e.target.value < 1 || !Number.isInteger(+e.target.value)) {
+        if (validNumber(e.target.value)) {
           e.target.value = 1;
         }
 
@@ -166,61 +169,24 @@ fetch("http://localhost:3000/api/products/")
         }
 
         ePrice.innerText = value[apiNumber].price * e.target.value + " €";
-        priceNumber = 0;
-        for (let i = 0; i < inputs.length; i++) {
-          priceNumber =
-            Number(
-              inputs[i]
-                .closest(".cart__item__content")
-                .firstChild.lastChild.innerText.split(" ")[0]
-            ) + Number(priceNumber);
-        }
-        priceNumber =
-          Number(priceNumber) - Number(ePrice.innerText.split(" ")[0]);
-        priceNumber =
-          Number(priceNumber) + Number(value[apiNumber].price * e.target.value);
 
-        totalPrice.innerText = priceNumber;
-
-        quantityNumber = 0;
-        for (let i = 0; i < inputs.length; i++) {
-          quantityNumber = Number(inputs[i].value) + Number(quantityNumber);
-        }
-
-        totalQuantity.innerText = quantityNumber;
+        calculatePrices(inputs);
       });
 
       deletes = document.querySelectorAll(".deleteItem");
-      deletes[i].addEventListener("click", function (e) {
+      deletes[i].addEventListener("click", function () {
         let eArticle = deletes[i].closest("article");
         let eId = eArticle.getAttribute("data-id");
         let eColor = eArticle.getAttribute("data-color");
-
         let item = constructItem(eId, eColor);
-
-        priceNumber =
-          Number(priceNumber) -
-          Number(
-            deletes[i]
-              .closest(".cart__item__content")
-              .firstChild.lastChild.innerText.split(" ")[0]
-          );
-        totalPrice.innerText = priceNumber;
-
-        quantityNumber =
-          Number(quantityNumber) -
-          Number(
-            deletes[i]
-              .closest(".cart__item__content__settings")
-              .firstChild.firstChild.innerText.split(" ")[2]
-          );
-        totalQuantity.innerText = quantityNumber;
 
         delete kanapcart[item];
         saveCart(kanapcart);
 
-        deletes[i].closest("article").innerHTML = "";
-        // trouver une méthode remove
+        deletes[i].closest("article").remove();
+
+        let inputs = document.querySelectorAll(".itemQuantity");
+        calculatePrices(inputs);
       });
     }
   })
