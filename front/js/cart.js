@@ -95,7 +95,12 @@ function createCart(key, value) {
 }
 
 //Sets total prices and quantities
-function calculatePrices() {
+function calculatePrices(inputs) {
+  let totalQuantity = document.querySelector("#totalQuantity");
+  let totalPrice = document.querySelector("#totalPrice");
+  let priceNumber = 0;
+  let quantityNumber = 0;
+
   for (let i = 0; i < inputs.length; i++) {
     priceNumber =
       Number(
@@ -104,14 +109,11 @@ function calculatePrices() {
           .firstChild.lastChild.innerText.split(" ")[0]
       ) + Number(priceNumber);
   }
-
   totalPrice.innerText = priceNumber;
 
-  let quantityNumber = 0;
   for (let i = 0; i < inputs.length; i++) {
     quantityNumber = Number(inputs[i].value) + Number(quantityNumber);
   }
-
   totalQuantity.innerText = quantityNumber;
 }
 
@@ -128,11 +130,8 @@ fetch("http://localhost:3000/api/products/")
       //calculatePrices();
     });
 
-    let totalQuantity = document.querySelector("#totalQuantity");
-    let totalPrice = document.querySelector("#totalPrice");
     let inputs = document.querySelectorAll(".itemQuantity");
 
-    let priceNumber = 0;
     calculatePrices();
 
     for (let i = 0; i < inputs.length; i++) {
