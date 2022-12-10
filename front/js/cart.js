@@ -95,7 +95,7 @@ function createCart(key, value) {
 }
 
 //Sets total prices and quantities
-function calculatePrices(inputs) {
+function calculateTotals(inputs) {
   let totalQuantity = document.querySelector("#totalQuantity");
   let totalPrice = document.querySelector("#totalPrice");
   let priceNumber = 0;
@@ -117,9 +117,29 @@ function calculatePrices(inputs) {
   totalQuantity.innerText = quantityNumber;
 }
 
-//Tests if quantity input is valid
-function validNumber(number) {
+//Tests if quantity input is invalid
+function invalidNumber(number) {
   return number < 1 || !Number.isInteger(+number);
+}
+
+//Sets item's quantity and price based on input
+function newPrice(inputs) {
+  let ePrice = inputs[i].closest(".cart__item__content").firstChild.lastChild;
+  let eQuantity = inputs[i].closest(
+    ".cart__item__content__settings__quantity"
+  ).firstChild;
+  eQuantity.innerText = "Qté : " + e.target.value;
+
+  let apiNumber = -1;
+  let n = 0;
+  while (apiNumber < 0 || n < value.length) {
+    if (eId == value[n]._id) {
+      apiNumber = n;
+    }
+    n++;
+  }
+
+  ePrice.innerText = value[apiNumber].price * e.target.value + " €";
 }
 
 //Importing all products from API
@@ -135,11 +155,11 @@ fetch("http://localhost:3000/api/products/")
     });
 
     let inputs = document.querySelectorAll(".itemQuantity");
-    calculatePrices(inputs);
+    calculateTotals(inputs);
 
     for (let i = 0; i < inputs.length; i++) {
       inputs[i].addEventListener("change", function (e) {
-        if (validNumber(e.target.value)) {
+        if (invalidNumber(e.target.value)) {
           e.target.value = 1;
         }
 
@@ -152,25 +172,8 @@ fetch("http://localhost:3000/api/products/")
         kanapcart[item] = e.target.value;
         saveCart(kanapcart);
 
-        let ePrice = inputs[i].closest(".cart__item__content").firstChild
-          .lastChild;
-        let eQuantity = inputs[i].closest(
-          ".cart__item__content__settings__quantity"
-        ).firstChild;
-        eQuantity.innerText = "Qté : " + e.target.value;
-
-        let apiNumber = -1;
-        let n = 0;
-        while (apiNumber < 0 || n < value.length) {
-          if (eId == value[n]._id) {
-            apiNumber = n;
-          }
-          n++;
-        }
-
-        ePrice.innerText = value[apiNumber].price * e.target.value + " €";
-
-        calculatePrices(inputs);
+        newPrice(inputs);
+        calculateTotals(inputs);
       });
 
       deletes = document.querySelectorAll(".deleteItem");
@@ -186,7 +189,7 @@ fetch("http://localhost:3000/api/products/")
         deletes[i].closest("article").remove();
 
         let inputs = document.querySelectorAll(".itemQuantity");
-        calculatePrices(inputs);
+        calculateTotals(inputs);
       });
     }
   })
@@ -284,10 +287,12 @@ order.addEventListener("click", function (event) {
   }
 });
 
+// Sets item format to save in local storage .json
 function constructItem(id, color) {
   return [id, color];
 }
 
+// Returns parsed local storage .json, or empty array if there is none
 function getCart() {
   let cart = localStorage.getItem("kanapcart");
   if (cart != null) {
@@ -297,6 +302,7 @@ function getCart() {
   }
 }
 
+// Saves cart in local storage .json
 function saveCart(cart) {
   localStorage.setItem("kanapcart", JSON.stringify(cart));
 }

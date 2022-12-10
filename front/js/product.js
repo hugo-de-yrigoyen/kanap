@@ -67,10 +67,12 @@ function check(number, color) {
   return number > 0 && Number.isInteger(+number) && !color == "";
 }
 
+// Sets item format to save in local storage .json
 function constructItem(id, color) {
   return [id, color];
 }
 
+// Returns parsed local storage .json, or empty array if there is none
 function getCart() {
   const cart = localStorage.getItem("kanapcart");
   if (cart != null) {
@@ -80,6 +82,7 @@ function getCart() {
   }
 }
 
+// Saves cart in local storage .json
 function saveCart(cart) {
   localStorage.setItem("kanapcart", JSON.stringify(cart));
 }
