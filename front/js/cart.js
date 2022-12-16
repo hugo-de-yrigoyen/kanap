@@ -188,7 +188,7 @@ fetch("http://localhost:3000/api/products/")
 
         deletes[i].closest("article").remove();
 
-        let inputs = document.querySelectorAll(".itemQuantity");
+        inputs = document.querySelectorAll(".itemQuantity");
         calculateTotals(inputs);
       });
     }

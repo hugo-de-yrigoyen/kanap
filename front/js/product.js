@@ -63,6 +63,7 @@ document.querySelector("#addToCart").addEventListener("click", function () {
   }
 });
 
+// Checks if product quantity is valid and if a color is selected
 function check(number, color) {
   return number > 0 && Number.isInteger(+number) && !color == "";
 }
