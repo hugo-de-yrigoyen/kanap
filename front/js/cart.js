@@ -123,7 +123,7 @@ function invalidNumber(number) {
 }
 
 //Sets item's quantity and price based on input
-function newPrice(inputs) {
+function newPrice(inputs, i, e, eId, value) {
   let ePrice = inputs[i].closest(".cart__item__content").firstChild.lastChild;
   let eQuantity = inputs[i].closest(
     ".cart__item__content__settings__quantity"
@@ -172,7 +172,7 @@ fetch("http://localhost:3000/api/products/")
         kanapcart[item] = e.target.value;
         saveCart(kanapcart);
 
-        newPrice(inputs);
+        newPrice(inputs, i, e, eId, value);
         calculateTotals(inputs);
       });
 
