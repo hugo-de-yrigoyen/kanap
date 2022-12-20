@@ -221,7 +221,6 @@ function validateEmail(email) {
   return re.test(String(email).toLowerCase());
 }
 const testWord = /^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/;
-
 const firstNameError = document.querySelector("#firstNameErrorMsg");
 const lastNameError = document.querySelector("#lastNameErrorMsg");
 const cityError = document.querySelector("#cityErrorMsg");
