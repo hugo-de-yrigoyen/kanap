@@ -11,3 +11,10 @@
 
 - Consignes : https://course.oc-static.com/projects/DWJ_FR_P5/DW+P5+-+Specifications+fonctionnelles.pdf
 - Maquette de départ : https://github.com/OpenClassrooms-Student-Center/P5-Dev-Web-Kanap
+
+## Évaluation
+
+- Projet validé
+- Commentaires :
+  ![Évaluation 1](evaluation/evaluation1.png "Évaluation 1")
+  ![Évaluation 2](evaluation/evaluation2.png "Évaluation 2")
