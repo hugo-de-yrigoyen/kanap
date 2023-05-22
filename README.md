@@ -1,7 +1,7 @@
 # Kanap - Projet d'études
 
 - Dans le cadre de mes études de développeur web
-- Site de vente en ligne où j'ai mis en place l'affichage et la commande des articles en **Javascript** à partir du front-end et de l'API
+- Site e-commerce où j'ai mis en place l'affichage et la commande des articles avec un panier en **Javascript et JSON** à partir du front-end et de l'API
 
 ## Instructions
 
